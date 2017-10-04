@@ -293,7 +293,8 @@ Filter_Logs_Message(message) {
 
 	static poeTradeRegexStr 			:= "(.*)Hi, I would like to buy your (.*) listed for (.*) in (.*)" ; 1: Other, 2: Item, 3: Price, 4: League + Tab + Other
 	static poeTradeUnpricedRegexStr 	:= "(.*)Hi, I would like to buy your (.*) in (.*)" ; 1: Other, 2: Item, 3: League + Tab + Other
-	static poeTradeCurrencyRegexStr		:= "(.*)Hi, I'd like to buy your (.*) for my (.*) in (.*)" ; 1: Other, 2: Currency, 3: Price, 4: League + Tab + Other
+	static poeTradeCurrencyRegexStr		:= "(.*)Hi, I'd like to buy your (\d*\.?\d+) (.*) for my (\d*\.?\d+) (.*) in (.*)" ; 1: Other, 2: Item count, 3: Item string, 4: Price, 5: Price string 6: League + Tab + Other
+	
 	static poeTradeStashRegexStr 		:= "\(stash tab ""(.*)""; position: left (.*), top (.*)\)(.*)" ; 1: Tab, 2: Left, 3: Top, 4: Other
 	static poTradeQualityRegExStr 		:= "level (.*) (.*)% (.*)" ; 1: Item level, 2: Item quality, 3: Item name
 
@@ -429,10 +430,10 @@ Filter_Logs_Message(message) {
 					}
 					else if ( tradeRegExName = "poeTradeCurrencyRegexStr" ) {
 						whispOther 			:= whispPat1
-						whispItem 			:= whispPat2
-						whispPrice 			:= whispPat3
-						endOfWhisper 		:= whispPat4
-						whispPat1 := "", whispPat2 := "", whispPat3 := "", whispPat4 := ""
+						whispItem 			:= whispPat2 " " whispPat3
+						whispPrice 			:= whispPat4 " " whispPat5 " (rate: " whispPat4 / whispPat2 " | " whispPat2 / whispPat4 ")"
+						endOfWhisper 		:= whispPat6
+						whispPat1 := "", whispPat2 := "", whispPat3 := "", whispPat4 := "", whispPat5 := "", whispPat6 := ""
 
 						for id, leagueName in Trading_Leagues {
 							if RegExMatch(endOfWhisper, "S)" leagueName "(.*)", endOfWhisperPat) {
